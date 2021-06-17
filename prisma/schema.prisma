@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Profile {
+  id     Int     @id @default(autoincrement())
+  bio    String?
+  user   User    @relation(fields: [userId], references: [id])
+  userId Int     @unique
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  email     String      @unique
+  name      String?
+  password  String
+  profile   Profile?
+  community Community[]
+  groups    Group[]
+}
+
+model Community {
+  id     Int     @id @default(autoincrement())
+  name   String
+  owner  User    @relation(fields: [userId], references: [id])
+  userId Int
+  Event  Event[]
+  Group  Group[]
+}
+
+model Group {
+  id          Int       @id @default(autoincrement())
+  name        String
+  community   Community @relation(fields: [communityId], references: [id])
+  communityId Int
+  Events      Event[]
+  Users       User[]
+}
+
+model Event {
+  id          Int       @id @default(autoincrement())
+  name        String?
+  start       DateTime
+  end         DateTime
+  reminder    DateTime
+  community   Community @relation(fields: [communityId], references: [id])
+  communityId Int
+  groups      Group[]
+}
