@@ -5,11 +5,20 @@ import { ApolloServer, ResolverFn } from 'apollo-server'
 
 const prisma = new PrismaClient()
 
-const typeDefs = JSON.stringify({ Community, Profile, Group, Event, User});
+const typeDefs = `
+  type User {
+    email: String!
+    name: String
+  }
+
+  type Query {
+    allUsers: [User!]!
+  }
+`;
 
 const resolvers = {
   Query: {
-    allUsers: () => {
+    createUser: () => {
       return prisma.user.findMany();
     }
   }
